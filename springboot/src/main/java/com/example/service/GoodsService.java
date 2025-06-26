@@ -184,10 +184,10 @@ public class GoodsService {
                         index += 3;
 //                        System.out.println("商品 " + goodsId + " 对用户 " + userId + " 的订单权重为: " + index);
                     }
-                    // 4. 评论2
+                    // 4. 评论4
                     Optional<Comment> commentOptional = allComments.stream().filter(x -> x.getGoodsId().equals(goodsId) && x.getUserId().equals(userId)).findFirst();
                     if (commentOptional.isPresent()) {
-                        index += 2;
+                        index += 4;
                     }
                     if (index > 1) {
                         RelateDTO relateDTO = new RelateDTO(userId, goodsId, index);

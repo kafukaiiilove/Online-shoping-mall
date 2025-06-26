@@ -1,6 +1,16 @@
 <template>
   <div class="main-content">
-    <div style="height: 60px; background-color: red"></div>
+    <div style="height: 60px; background: linear-gradient(to right, #FFF8DC, #FFEFD5); display: flex; align-items: center; overflow: hidden; position: relative; border-radius: 15px;">
+      <div class="announcement-container">
+        <div class="announcement-content">
+          <div class="announcement-wrapper">
+            <span v-for="(item, index) in announcements" :key="index" class="announcement-item">
+              {{ item }}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
     <div style="display: flex; justify-content: center;">
       <div class="left"></div>
       <div style="width: 86%; background-color: white; margin-bottom: 50px">
@@ -9,14 +19,14 @@
         <!-- 天猫Gif -->
         <div style="display: flex; flex: 0 1 auto; align-items: center; justify-content: space-between; margin-top: 5px;">
   <!-- 天猫Gif -->
-  <div style="position: relative; height: 100px; overflow: hidden;">
+  <div style="position: relative; height: 100px; overflow: hidden; width: 150px;margin-left: 40px;">
     <a href="/front/home">
-      <img src="http://how2j.cn/tmall/img/site/logo.gif" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50px;">
+      <img src="http://localhost:9090/files/1733909633270-456.png" alt="" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50px;" @load="logImageLoad">
     </a>
   </div>
 
   <!-- 搜索框 -->
-  <div style="display: flex; flex: auto; margin-left: 4%;margin-right: 26%; max-width: auto; align-items: center; height: 50px; border: 2px solid red; border-radius: 15px; padding: 5px;">
+  <div style="display: flex; flex: auto; margin-left: 11%; margin-right: 24%; max-width: auto; align-items: center; height: 50px; border: 2px solid red; border-radius: 15px; padding: 5px;">
             <!-- 输入框 -->
             <input
               type="text"
@@ -82,7 +92,7 @@
  margin-top: 20px; border-radius: 15px; ">
             <div style="text-align: center; margin-top: 30px">
               <!-- 如果用户未登录，头像不可点击 -->
-              <img :src="user.username ? user.avatar : require('@/assets/imgs/456.png')" alt="" style="width: 80px; height: 80px; border-radius: 50%"  
+              <img :src="user.username ? user.avatar : require('/src/assets/imgs/456.png')" alt="" style="width: 80px; height: 80px; border-radius: 50%"  
               @click="user.username ? navTo('/front/person') : null">
                <!-- 公告 -->
                <div style="margin-top: 10px">
@@ -209,6 +219,23 @@ export default {
         require('@/assets/imgs/carousel-7.png'),
         require('@/assets/imgs/carousel-8.png'),
       ],
+      announcements: [
+        "欢迎来到我们的商城！",
+        "新品上市，限时特惠！",
+        "全场满300减50，满500减100！",
+        "会员专享折扣，立即加入！",
+        "限时抢购，手慢无！",
+        "新品首发，抢先体验！",
+        "品质保证，假一赔十！",
+        "全场包邮，无门槛！",
+        "每日签到，积分奖励！",
+        "关注店铺，领取优惠券！",
+        "新品预售，提前锁定！",
+        "限时折扣，错过等一年！",
+        "品质生活，从这里开始！",
+        "购物无忧，售后无忧！",
+        "精选好物，等你来选！"
+      ],
     }
   },
   mounted() {
@@ -216,6 +243,18 @@ export default {
     this.loadNotice()
     this.loadGoods()
     this.loadRecommend()
+    // 添加动画持续时间检查
+    console.log('公告数量:', this.announcements.length)
+    console.log('动画持续时间:', `${this.announcements.length * 5}s`)
+    
+    // 检查DOM元素
+    this.$nextTick(() => {
+      const container = document.querySelector('.announcement-container')
+      const content = document.querySelector('.announcement-content')
+      console.log('容器宽度:', container?.offsetWidth)
+      console.log('内容宽度:', content?.offsetWidth)
+      console.log('内容样式:', content?.style.cssText)
+    })
   },
   // methods：本页面所有的点击事件或者其他函数定义区
   methods: {
@@ -292,6 +331,32 @@ export default {
     search() {
       let name = this.name ? this.name : ''
       location.href = '/front/search?name=' + name
+    },
+    logImageLoad() {
+      console.log('图片加载成功');
+    },
+    onAnimationStart(event) {
+      console.log('动画开始:', event)
+      console.log('当前动画持续时间:', event.target.style.animationDuration)
+      console.log('动画元素样式:', event.target.style.cssText)
+    },
+    onAnimationIteration(event) {
+      console.log('动画循环:', event)
+      console.log('当前transform:', event.target.style.transform)
+    },
+    onAnimationEnd(event) {
+      console.log('动画结束，重新开始:', event)
+      // 强制重新开始动画
+      event.target.style.animation = 'none'
+      event.target.offsetHeight // 触发重排
+      event.target.style.animation = `scroll-left ${this.announcements.length * 5}s linear infinite`
+      console.log('重置后的动画样式:', event.target.style.cssText)
+    },
+    refreshData() {
+      // 实现刷新数据的逻辑
+      console.log('刷新数据')
+      console.log('当前公告数量:', this.announcements.length)
+      console.log('当前动画持续时间:', `${this.announcements.length * 5}s`)
     }
   }
 }
@@ -325,5 +390,40 @@ export default {
 .input-with-select .el-input-group__prepend {
     background-color: #fff;
   }
+.announcement-container {
+  width: 100%;
+  overflow: hidden;
+  position: relative;
+  height: 100%;
+}
 
+.announcement-content {
+  position: absolute;
+  white-space: nowrap;
+  animation: scroll-left 30s linear infinite;
+  left: 0;
+}
+
+.announcement-wrapper {
+  display: inline-block;
+  padding: 0 20px;
+}
+
+.announcement-item {
+  display: inline-block;
+  color: #666;
+  margin-right: 50px;
+  font-size: 16px;
+  font-weight: bold;
+  line-height: 60px;
+}
+
+@keyframes scroll-left {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
 </style>
